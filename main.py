@@ -1,6 +1,6 @@
 import ffmpy
 import subprocess
-import sys
+
 # must be noted that these use -i ffmpeg command which defines the ffmpeg pipe protocol this can be done using ffmpy.
 # It also has filtering commands which have to be managed in a different way.
 ffmbcarc14x9_sd =  {"validFor": "640x480|480x360|720x540|960x720","ffmbc": "-threads 4 -i %INPUT% -r 25 -ar 48000 -vf scale=0:0:interl=1,crop=iw:ih-ih*0.125:0:iw*.0625,scale=616:576:interl=1,pad=720:576:52:0:black -vcodec libx264 -cqp 18 -profile high -preset fast -tff -flags +loop+ildct+ilme -acodec mp2 -ab 192k -aspect 16:9 -f mpegts -y -ac 2 %OUTPUT%"}
@@ -11,14 +11,16 @@ ffmbcnoarc_sd = {"validFor": "480x272|480x270|400x222|576x320|568x320|640x360|64
 ffmbcnoarc_hd_copy = {"validFor": "1440x1080|1280x720|1200x676|1216x688|1920x1080","ffmbc": ['-threads 4 -i pipe:0 -r 25 -ar 48000', '-vf "scale=1440:1080:interl=1"', "-vcodec libx264 -profile high -preset fast -flags +loop+ildct+ilme -acodec mp2 -ab 192k -aspect 16:9 -f mpegts -y -ac 2 pipe:1"]}
 # ffmbcnoarc_hd_copy = {"validFor": "1440x1080|1280x720|1200x676|1216x688|1920x1080","ffmbc": [ '-vf "scale=1440:1080:interl=1"', "-vcodec libx264 -profile high -preset fast -flags +loop+ildct+ilme -acodec mp2 -ab 192k -aspect 16:9 -f mpegts -y -ac 2 pipe:1"]}
 
+# mp4 encoding only seems to work if i move the flags with this account
+#  ffmpeg -i input.mp4 -c copy -movflags +faststart output.mp4. This moves MOOV Atom to the beginning of the file.
 ff = ffmpy.FFmpeg(
-    inputs={'pipe:0': None},
-    outputs={'pipe:1':  ffmbcnoarc_hd_copy.get('ffmbc')}
+    inputs={'test_video.mp4': None},
+    outputs={'pipe:1':  '-vf "scale=1440:1080:interl=1" -c:v h264 -f mpegts -y'}
 )
 
 print(ff.cmd)
-stdout, stderr = ff.run(input_data=open('test-video.mp4', 'rb').read(), stdout=subprocess.PIPE)
+stdout, stderr = ff.run(stdout=subprocess.PIPE)
 file = open('output.ts', 'wb')
 file.write(stdout)
-# file.wr
+
 # ff.run()
