@@ -3,6 +3,7 @@ Python ffmpeg encoder in a docker container
 -----
 
 This is just a proof of concept to demonstrate the use of a docker image with python and ffmpeg installed can pipe mp4 video into a mpeg transport stream file on a shared volume.
+It comes with a test file which i should probably change. 
 
 Setup
 ----
