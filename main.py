@@ -21,7 +21,9 @@ ff = ffmpy.FFmpeg(
 
 print(ff.cmd)
 stdout, stderr = ff.run(stdout=subprocess.PIPE)
-file = open('output.ts', 'wb')
+
+# This could easily output to a S3 bucket but for now let it be a file.
+file = open('output/output.ts', 'wb')
 file.write(stdout)
 
 # ff.run()
